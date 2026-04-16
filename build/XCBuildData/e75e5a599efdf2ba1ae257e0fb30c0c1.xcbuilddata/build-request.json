@@ -36,5 +36,5 @@
   "useDryRun" : false,
   "useImplicitDependencies" : false,
   "useLegacyBuildLocations" : false,
-  "useParallelTargets" : false
+  "useParallelTargets" : true
 }

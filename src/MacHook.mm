@@ -1,6 +1,7 @@
 #import <Cocoa/Cocoa.h>
 #include <string>
 #include <iostream>
+#include <CoreGraphics/CoreGraphics.h>
 #include "../headers/MacHook.h"
 #include "../headers/json.hpp" // The JSON parser we downloaded earlier
 
@@ -8,7 +9,9 @@
 using json = nlohmann::json;
 
 static NSWindow* gFloatingWindow = nil;
-static id gEventMonitor = nil;
+static CGEventTapProxy gEventTapProxy = NULL;
+static CFMachPortRef gEventTap = NULL;
+static CFRunLoopSourceRef gEventTapSource = NULL;
 static NSTextField* gInputField = nil;
 static NSTextField* gOutputLabel = nil;
 
@@ -171,36 +174,71 @@ void ToggleUIWindow() {
     }
 }
 
-void InitMacUIHook() {
-    gEventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskKeyDown
-                                                          handler:^NSEvent * _Nullable(NSEvent * _Nonnull event) {
+// Global CGEventTap callback function
+static CGEventRef EventTapCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef event, void *refcon) {
+    if (type == kCGEventKeyDown) {
+        CGKeyCode keyCode = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
+        CGEventFlags flags = CGEventGetFlags(event);
         
-        NSEventModifierFlags flags = [event modifierFlags] & NSEventModifierFlagDeviceIndependentFlagsMask;
-        unsigned short keyCode = [event keyCode];
+        // Ctrl + Space (keyCode 49 = space, cmdKey bit for Control)
+        bool isCtrlSpace = (keyCode == 49) && (flags & kCGEventFlagMaskControl);
         
-        // Ctrl + Space -> Toggle Window
-        if ((flags & NSEventModifierFlagControl) && keyCode == 49) {
-            ToggleUIWindow();
-            return nil; 
+        if (isCtrlSpace) {
+            // Dispatch to main thread to update UI
+            dispatch_async(dispatch_get_main_queue(), ^{
+                ToggleUIWindow();
+            });
+            return NULL; // Consume the event so it doesn't propagate
         }
         
+        // If window is visible, handle Escape and Enter keys
         if ([gFloatingWindow isVisible]) {
-            // Escape -> Close Window
+            // Escape (keyCode 53)
             if (keyCode == 53) {
-                ToggleUIWindow();
-                return nil; 
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    ToggleUIWindow();
+                });
+                return NULL;
             }
             
-            // Enter/Return -> Submit Prompt to Gemini
+            // Enter/Return (keyCode 36)
             if (keyCode == 36) {
-                NSString* prompt = [gInputField stringValue];
-                if ([prompt length] > 0) {
-                    FetchGeminiResponse(prompt);
-                }
-                return nil;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    NSString* prompt = [gInputField stringValue];
+                    if ([prompt length] > 0) {
+                        FetchGeminiResponse(prompt);
+                    }
+                });
+                return NULL;
             }
         }
-        
-        return event; 
-    }];
+    }
+    
+    return event;
+}
+
+void InitMacUIHook() {
+    // Check if we have accessibility permissions
+    if (!AXIsProcessTrusted()) {
+        NSLog(@"⚠️  AECopilot needs accessibility permissions in System Preferences > Security & Privacy.");
+        return;
+    }
+    
+    // Create the event tap to monitor global key events
+    CGEventMask eventMask = CGEventMaskBit(kCGEventKeyDown);
+    gEventTap = CGEventTapCreate(kCGSessionEventTap, kCGHeadInsertEventTap, kCGEventTapOptionDefault, eventMask, EventTapCallback, NULL);
+    
+    if (!gEventTap) {
+        NSLog(@"❌ Failed to create CGEventTap - Ctrl+Space hotkey will not work");
+        return;
+    }
+    
+    // Add to the main run loop
+    gEventTapSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, gEventTap, 0);
+    CFRunLoopAddSource(CFRunLoopGetMain(), gEventTapSource, kCFRunLoopDefaultMode);
+    
+    // Enable the event tap
+    CGEventTapEnable(gEventTap, true);
+    
+    NSLog(@"✅ AECopilot keyboard hook initialized - Press Ctrl+Space to open!");
 }
