@@ -52,7 +52,7 @@
 		C4E6188C095A3C800012CA3F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-			C4E618CC095A3CE80012CA3F /* AECopilot.plugin */;
+			C4E618CC095A3CE80012CA3F /* AECopilot.plugin */,
 			);
 			name = Products;
 			sourceTree = "<group>";
