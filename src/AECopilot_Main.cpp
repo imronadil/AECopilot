@@ -2,10 +2,7 @@
 #include "entry.h"
 #include "AE_GeneralPlug.h"
 #include "AE_Macros.h"
-#include "../headers/json.hpp"
-
-// Forward declaration for the Mac hook
-extern void SetupMacKeyboardHook();
+#include "../headers/MacHook.h"
 
 extern "C" DllExport
 PF_Err EntryPointFunc(
@@ -18,11 +15,8 @@ PF_Err EntryPointFunc(
     PF_Err err = A_Err_NONE;
 
     try {
-        // Initialize your macOS global keyboard hook
-        SetupMacKeyboardHook();
-        
-        // TODO: Register your AEGP with the application
-        // TODO: Initialize networking threads for the Gemini API
+        // Start listening for Ctrl + Space immediately when AE loads
+        InitMacUIHook();
         
     } catch (...) {
         err = A_Err_GENERIC;
