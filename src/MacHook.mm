@@ -180,12 +180,19 @@ static CGEventRef EventTapCallback(CGEventTapProxy proxy, CGEventType type, CGEv
         CGKeyCode keyCode = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
         CGEventFlags flags = CGEventGetFlags(event);
         
-        // Ctrl + Space (keyCode 49 = space, cmdKey bit for Control)
-        bool isCtrlSpace = (keyCode == 49) && (flags & kCGEventFlagMaskControl);
+        // Debug: Log all key presses
+        NSLog(@"🔍 Key pressed - keyCode: %u, flags: %llu", keyCode, flags);
+        
+        // Ctrl + Space (keyCode 49 = space, Control flag)
+        bool isCtrlSpaceControl = (keyCode == 49) && (flags & kCGEventFlagMaskControl);
+        bool isCtrlSpaceCommand = (keyCode == 49) && (flags & kCGEventFlagMaskCommand);
+        bool isCtrlSpace = isCtrlSpaceControl || isCtrlSpaceCommand;
         
         if (isCtrlSpace) {
+            NSLog(@"✅ Ctrl+Space detected! (Control: %d, Command: %d)", isCtrlSpaceControl, isCtrlSpaceCommand);
             // Dispatch to main thread to update UI
             dispatch_async(dispatch_get_main_queue(), ^{
+                NSLog(@"📢 Toggling UI window...");
                 ToggleUIWindow();
             });
             return NULL; // Consume the event so it doesn't propagate
@@ -218,27 +225,45 @@ static CGEventRef EventTapCallback(CGEventTapProxy proxy, CGEventType type, CGEv
 }
 
 void InitMacUIHook() {
+    NSLog(@"=== AECopilot: InitMacUIHook called ===");
+    
     // Check if we have accessibility permissions
     if (!AXIsProcessTrusted()) {
-        NSLog(@"⚠️  AECopilot needs accessibility permissions in System Preferences > Security & Privacy.");
+        NSLog(@"❌ CRITICAL: AXIsProcessTrusted() = NO. AECopilot needs accessibility permissions!");
+        NSLog(@"   Go to: System Preferences > Security & Privacy > Accessibility");
+        NSLog(@"   Then add After Effects to the list and grant it access.");
         return;
     }
+    
+    NSLog(@"✅ Accessibility permissions granted");
     
     // Create the event tap to monitor global key events
     CGEventMask eventMask = CGEventMaskBit(kCGEventKeyDown);
     gEventTap = CGEventTapCreate(kCGSessionEventTap, kCGHeadInsertEventTap, kCGEventTapOptionDefault, eventMask, EventTapCallback, NULL);
     
     if (!gEventTap) {
-        NSLog(@"❌ Failed to create CGEventTap - Ctrl+Space hotkey will not work");
+        NSLog(@"❌ FAILED: CGEventTapCreate returned NULL");
+        NSLog(@"   This means the event tap could not be created.");
         return;
     }
     
+    NSLog(@"✅ CGEventTap created successfully");
+    
     // Add to the main run loop
     gEventTapSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, gEventTap, 0);
+    if (!gEventTapSource) {
+        NSLog(@"❌ FAILED: CFMachPortCreateRunLoopSource returned NULL");
+        return;
+    }
+    
+    NSLog(@"✅ RunLoop source created");
+    
     CFRunLoopAddSource(CFRunLoopGetMain(), gEventTapSource, kCFRunLoopDefaultMode);
+    NSLog(@"✅ Added source to main run loop");
     
     // Enable the event tap
     CGEventTapEnable(gEventTap, true);
+    NSLog(@"✅ CGEventTap enabled");
     
-    NSLog(@"✅ AECopilot keyboard hook initialized - Press Ctrl+Space to open!");
+    NSLog(@"🎉 AECopilot FULLY INITIALIZED - Ctrl+Space hotkey is ACTIVE!");
 }

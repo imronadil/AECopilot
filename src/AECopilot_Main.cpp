@@ -33,6 +33,9 @@ PF_Err EntryPointFunc(
     AEGP_PluginID aegp_plugin_id,
     AEGP_GlobalRefcon *global_refconP) 
 {
+    fprintf(stderr, "=== AECopilot Plugin: EntryPointFunc called ===\n");
+    fprintf(stderr, "    Major: %ld, Minor: %ld\n", major_version, minor_version);
+    
     // Save the pointers provided by After Effects
     s_pica_basicP = pica_basicP;
     s_aegp_plugin_id = aegp_plugin_id;
@@ -40,8 +43,11 @@ PF_Err EntryPointFunc(
     PF_Err err = A_Err_NONE;
 
     try {
+        fprintf(stderr, "🚀 Calling InitMacUIHook()...\n");
         InitMacUIHook();
+        fprintf(stderr, "✅ InitMacUIHook() completed\n");
     } catch (...) {
+        fprintf(stderr, "❌ Exception in InitMacUIHook()\n");
         err = A_Err_GENERIC;
     }
 
