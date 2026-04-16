@@ -210,10 +210,10 @@
 				DEAD_CODE_STRIPPING = YES;
 				GCC_MODEL_TUNING = G5;
 				GENERATE_PKGINFO_FILE = YES;
-			INFOPLIST_FILE = "AECopilot.plugin-Info.plist";
-			INSTALL_PATH = "$(HOME)/Library/Bundles";
-			PRODUCT_BUNDLE_IDENTIFIER = com.adobe.AfterEffects.AECopilot;
-			PRODUCT_NAME = AECopilot;
+				INFOPLIST_FILE = "AECopilot.plugin-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.AfterEffects.AECopilot;
+				PRODUCT_NAME = AECopilot;
 				SDKROOT = macosx;
 				ZERO_LINK = NO;
 			};
