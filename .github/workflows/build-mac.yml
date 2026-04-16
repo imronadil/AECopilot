@@ -1,0 +1,34 @@
+name: Build AE Plugin (macOS)
+
+# This triggers the cloud build every time you push code to the 'main' branch
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: macos-latest # This tells GitHub to rent a Mac for you
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Select Xcode Version
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+
+    - name: Build Xcode Project
+      run: |
+        cd AECopilot_Native
+        # Replace 'ProjDumper' with your actual target name if you changed it in Xcode
+        xcodebuild -project AECopilot.xcodeproj -target "ProjDumper" -configuration Release build
+
+    - name: Upload Compiled Plugin
+      uses: actions/upload-artifact@v4
+      with:
+        name: AECopilot-Mac-Build
+        # This grabs the compiled .plugin file so you can download it
+        path: AECopilot_Native/build/Release/*.plugin
