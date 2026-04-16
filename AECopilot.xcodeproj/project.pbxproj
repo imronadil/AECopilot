@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -15,11 +15,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		143067234109821F78962028 /* MacHook.mm */ = {isa = PBXFileReference; includeInIndex = 1; name = MacHook.mm; path = src/MacHook.mm; sourceTree = "<group>"; };
+		143067234109821F78962028 /* MacHook.mm */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.objcpp; name = MacHook.mm; path = src/MacHook.mm; sourceTree = "<group>"; };
 		5B31DA842B60D707B6FFDAC1 /* AECopilot_Main.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; name = AECopilot_Main.cpp; path = src/AECopilot_Main.cpp; sourceTree = "<group>"; };
 		999F084C761F4736D708B2DB /* MissingSuiteError.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; name = MissingSuiteError.cpp; path = AE_SDK/Util/MissingSuiteError.cpp; sourceTree = "<group>"; };
 		B7381F90EA400AE0F3F7E954 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Cocoa.framework; sourceTree = "<group>"; };
-		C2DBE9892A6CA37984585D21 /* AECopilot.bundle */ = {isa = PBXFileReference; explicitFileType = "wrapper.plug-in"; includeInIndex = 0; path = AECopilot.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2DBE9892A6CA37984585D21 /* AECopilot.plugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AECopilot.plugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		E75633211E764B6701498E22 /* AEGP_SuiteHandler.cpp */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; name = AEGP_SuiteHandler.cpp; path = AE_SDK/Util/AEGP_SuiteHandler.cpp; sourceTree = "<group>"; };
 		FFDFC44A6A536C27E0136722 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
@@ -68,7 +68,7 @@
 		F8B34799320A19F8E4A0BA5C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				C2DBE9892A6CA37984585D21 /* AECopilot.bundle */,
+				C2DBE9892A6CA37984585D21 /* AECopilot.plugin */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -83,6 +83,7 @@
 				997EA10BEE51FE6D4E8AF1BB /* Sources */,
 				C79CEFC92CC3C4C7FDF102BF /* Frameworks */,
 				A622475D17E3EB0E378B1A89 /* Resources */,
+				EB0FB445FBA8B47F0461A3A8 /* Copy Plugin to AE Folder */,
 			);
 			buildRules = (
 			);
@@ -90,7 +91,7 @@
 			);
 			name = AECopilot;
 			productName = AECopilot;
-			productReference = C2DBE9892A6CA37984585D21 /* AECopilot.bundle */;
+			productReference = C2DBE9892A6CA37984585D21 /* AECopilot.plugin */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -99,8 +100,9 @@
 		7EDF7102AB2A26E6A0571ACF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 2640;
 			};
 			buildConfigurationList = CD6966EDDA0DDCFFACC74229 /* Build configuration list for PBXProject "AECopilot" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -111,7 +113,6 @@
 				Base,
 			);
 			mainGroup = F50F328975C4C15CE0B3DF70;
-			minimizedProjectReferenceProxies = 0;
 			productRefGroup = F8B34799320A19F8E4A0BA5C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -130,6 +131,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		EB0FB445FBA8B47F0461A3A8 /* Copy Plugin to AE Folder */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Plugin to AE Folder";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Automatically copy the compiled plugin to the Adobe MediaCore folder\nDEST_DIR=\"/Library/Application Support/Adobe/Common/Plug-ins/7.0/MediaCore\"\n\n# Create the directory if it doesn't exist just in case\nmkdir -p \"$DEST_DIR\"\n\n# Copy the .plugin bundle\ncp -R \"${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}\" \"$DEST_DIR/\"\n\necho \"✅ Copied ${FULL_PRODUCT_NAME} to AE Plug-ins folder!\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		997EA10BEE51FE6D4E8AF1BB /* Sources */ = {
@@ -150,6 +172,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -180,9 +203,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -194,6 +219,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -204,6 +230,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -234,9 +261,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -255,6 +284,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -265,6 +295,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GENERATE_PKGINFO_FILE = YES;
 				HEADER_SEARCH_PATHS = (
@@ -287,6 +318,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GENERATE_PKGINFO_FILE = YES;
 				HEADER_SEARCH_PATHS = (
