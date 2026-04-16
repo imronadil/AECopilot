@@ -78,11 +78,27 @@ void FetchGeminiResponse(NSString* userPrompt) {
             size_t endPos = generatedCode.find("```");
             if (endPos != std::string::npos) generatedCode.erase(endPos, 3);
             
-            // 6. Push the result back to the UI
+            // 6. Push the result to the UI and execute it on the Main Thread
             dispatch_async(dispatch_get_main_queue(), ^{
-                [gOutputLabel setStringValue:[NSString stringWithUTF8String:generatedCode.c_str()]];
+                [gOutputLabel setStringValue:@"Execution complete."];
                 
-                // TODO: PHASE 3 - Send this generatedCode to AEGP_ExecuteScript!
+                // Rebuild your "Safety Net Wrapper" from the old hostscript.jsx
+                std::string undoName = "AI Copilot Action";
+                std::string wrappedScript = 
+                    "app.beginUndoGroup('" + undoName + "');\n"
+                    "try {\n"
+                    "  (function() {\n" + generatedCode + "\n})();\n"
+                    "} catch(err) {\n"
+                    "  alert('AI Execution Error: ' + err.toString());\n"
+                    "} finally {\n"
+                    "  app.endUndoGroup();\n"
+                    "}";
+                
+                // Send it to After Effects!
+                ExecuteExtendScript(wrappedScript.c_str());
+                
+                // Hide the floating window so the user can see what changed
+                ToggleUIWindow(); 
             });
             
         } catch (std::exception& e) {
