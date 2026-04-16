@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		248360369C7433A2C12FB3F3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FFDFC44A6A536C27E0136722 /* Cocoa.framework */; };
+		333612C7F51C8D2F240E68C2 /* AEGP_SuiteHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E75633211E764B6701498E22 /* AEGP_SuiteHandler.cpp */; };
+		398F6E4A12754D1DEA0AF046 /* AECopilot_Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B31DA842B60D707B6FFDAC1 /* AECopilot_Main.cpp */; };
+		B35EE35C8A35132A6A7A166A /* MissingSuiteError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 999F084C761F4736D708B2DB /* MissingSuiteError.cpp */; };
+		E08AE89E087F7D7A6DA73F92 /* MacHook.mm in Sources */ = {isa = PBXBuildFile; fileRef = 143067234109821F78962028 /* MacHook.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -132,6 +136,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				398F6E4A12754D1DEA0AF046 /* AECopilot_Main.cpp in Sources */,
+				E08AE89E087F7D7A6DA73F92 /* MacHook.mm in Sources */,
+				333612C7F51C8D2F240E68C2 /* AEGP_SuiteHandler.cpp in Sources */,
+				B35EE35C8A35132A6A7A166A /* MissingSuiteError.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -257,7 +265,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Cocoa.framework/Headers/Cocoa.h";
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GENERATE_PKGINFO_FILE = YES;
 				HEADER_SEARCH_PATHS = (
@@ -280,7 +287,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Cocoa.framework/Headers/Cocoa.h";
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GENERATE_PKGINFO_FILE = YES;
 				HEADER_SEARCH_PATHS = (

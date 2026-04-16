@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/graphicdesigner/Documents/Adobe Plugin/AECopilot_Native/build/Release/AECopilot.plugin/Contents/MacOS/AECopilot'
+relocations:     []
+...

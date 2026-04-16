@@ -17,9 +17,9 @@ void ExecuteExtendScript(const char* scriptStr) {
     AEGP_SuiteHandler suites(s_pica_basicP);
     
     try {
-        // We use UtilitySuite to execute raw ExtendScript natively
+        // We use UtilitySuite6 to execute raw ExtendScript natively
         // TRUE means we are using platform encoding (UTF-8)
-        suites.UtilitySuite3()->AEGP_ExecuteScript(s_aegp_plugin_id, scriptStr, TRUE, NULL, NULL);
+        suites.UtilitySuite6()->AEGP_ExecuteScript(s_aegp_plugin_id, scriptStr, TRUE, NULL, NULL);
     } catch (...) {
         // If the AI wrote terrible code, this catch prevents AE from crashing
     }
